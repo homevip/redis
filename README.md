@@ -35,3 +35,26 @@ var_dump($Redis->get('aaa')); // 获取
         }
     }
 ```
+
+##### 管道批量操作
+```
+$conf = [
+    'host'      => '192.168.1.9',
+    'port'      => '6379',
+    'password'  => '123456789',
+    'db'        => '0',
+];
+$redis = new Redis($conf);
+
+
+
+// 使用管道批量操作
+$pipe = $redis->multi(\Redis::PIPELINE);
+
+$key = 1300000;
+for ($i = 0; $i < 2000; $i++) {
+    $pipe->hset('public_key', $i, builderOrderSn());
+}
+
+dd($pipe->exec());
+```

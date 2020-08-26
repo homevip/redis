@@ -4,22 +4,28 @@ namespace homevip;
 
 class Redis
 {
-    private $redis; // 连接资源
+    /**
+     * 连接资源池
+     *
+     * @var [Redis Object]
+     */
+    private $redis;
+
 
     /**
      * 初始化操作
      *
-     * @param array $options
+     * @param array $config
      */
-    public function __construct(array $options = [])
+    public function __construct(array $config = [])
     {
         try {
             $this->redis = new \Redis();
-            $this->redis->connect($options['host'], $options['port']);
-            if ('' != $options['password']) {
-                $this->redis->auth($options['password']);
+            $this->redis->connect($config['host'], $config['port']);
+            if ('' != $config['password']) {
+                $this->redis->auth($config['password']);
             }
-            $this->redis->select($options['db']);
+            $this->redis->select($config['db']);
         } catch (\Exception $e) {
             echo 'redis 服务异常! ' . $e->getMessage();
         }
