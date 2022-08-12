@@ -13,22 +13,54 @@ class Redis
 
 
     /**
+     * 配置
+     *
+     * @var [array]
+     */
+    private static $config;
+
+
+    /**
+     * 定义实例
+     *
+     * @var [object]
+     */
+    private static $instance;
+
+
+    /**
      * 初始化操作
      *
      * @param array $config
      */
-    public function __construct(array $config = [])
+    public function __construct()
     {
         try {
             $this->redis = new \Redis();
-            $this->redis->connect($config['host'], $config['port']);
-            if ('' != $config['password']) {
-                $this->redis->auth($config['password']);
+            $this->redis->connect(self::$config['host'], self::$config['port']);
+            if ('' != self::$config['password']) {
+                $this->redis->auth(self::$config['password']);
             }
-            $this->redis->select($config['db']);
+            $this->redis->select(self::$config['db']);
         } catch (\Exception $e) {
             echo 'redis 服务异常! ' . $e->getMessage();
         }
+    }
+
+
+    /**
+     * 返回静态实例
+     *
+     * @return object
+     */
+    public static function instance(array $config = []): object
+    {
+        if (!self::$instance instanceof self) {
+            self::$config   = $config; // 配置参数
+
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
 
